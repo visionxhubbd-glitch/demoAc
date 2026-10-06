@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unseen Italy - Map Travel Tracker</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7f6;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    h1 { color: #008c45; margin-bottom: 5px; } /* Italian Green */
+    p { color: #555; }
+    .counter {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #cd212a; /* Italian Red */
+      margin: 15px 0;
+    }
+    .region-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .region-btn {
+      padding: 10px;
+      border: 2px solid #008c45;
+      background-color: #fff;
+      color: #008c45;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .region-btn.selected {
+      background-color: #008c45;
+      color: #fff;
+    }
+    .user-input {
+      margin-bottom: 20px;
+    }
+    .user-input input {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .download-btn {
+      padding: 12px 24px;
+      background-color: #cd212a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .download-btn:hover { background-color: #a01820; }
+  </style>
+</head>
+<body>
+
+<div class="container" id="capture-area">
+  <h1>Unseen Italy 🇮🇹</h1>
+  <p>Seleziona le regioni d'Italia che hai visitato (Select the regions you have visited)</p>
+
+  <div class="user-input">
+    <input type="text" id="username" placeholder="Inserisci il tuo nome (Your Name)" oninput="updateTitle()">
+  </div>
+
+  <div class="counter" id="counter">Visited: 0 / 20 Regioni (0%)</div>
+
+  <!-- Italy 20 Regions List -->
+  <div class="region-list" id="regionGrid"></div>
+</div>
+
+<br>
+<button class="download-btn" onclick="downloadMap()">Download Travel Map 📸</button>
+
+<script>
+  const regions = [
+    "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna",
+    "Friuli-Venezia Giulia", "Lazio", "Liguria", "Lombardia", "Marche",
+    "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia",
+    "Toscana", "Trentino-Alto Adige", "Umbria", "Valle d'Aosta", "Veneto"
+  ];
+
+  let selectedCount = 0;
+  const grid = document.getElementById('regionGrid');
+  const counterEl = document.getElementById('counter');
+
+  // Render Region Buttons
+  regions.forEach(region => {
+    const btn = document.createElement('button');
+    btn.className = 'region-btn';
+    btn.innerText = region;
+    btn.onclick = () => {
+      btn.classList.toggle('selected');
+      if (btn.classList.contains('selected')) {
+        selectedCount++;
+      } else {
+        selectedCount--;
+      }
+      updateCounter();
+    };
+    grid.appendChild(btn);
+  });
+
+  function updateCounter() {
+    const percentage = Math.round((selectedCount / regions.length) * 100);
+    counterEl.innerText = `Visited: ${selectedCount} / ${regions.length} Regioni (${percentage}%)`;
+  }
+
+  function downloadMap() {
+    html2canvas(document.getElementById('capture-area')).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'my-unseen-italy-map.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  }
+</script>
+
+</body>
+</html>
